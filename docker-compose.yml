@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    depends_on:
+      db:
+        condition: service_connected
+    restart: always
+
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: contentkit
+      POSTGRES_PASSWORD: contentkit_secret
+      POSTGRES_DB: contentkit
+    ports:
+      - "5432:5432"
+    restart: always
+
+volumes:
+  postgres_data:
