@@ -11,7 +11,7 @@ services:
       - .env.local
     depends_on:
       db:
-        condition: service_connected
+        condition: service_started
     restart: always
 
   db:
