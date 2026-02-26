@@ -1,0 +1,217 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Plan {
+  FREE
+  STARTER
+  PRO
+  AGENCY
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  TRIALING
+}
+
+enum Tone {
+  FORMAL
+  FRIENDLY
+  HUMOROUS
+  INSPIRATIONAL
+}
+
+enum Dialect {
+  MSA
+  GULF
+  EGYPTIAN
+  LEVANTINE
+  MOROCCAN
+}
+
+enum Platform {
+  INSTAGRAM
+  TIKTOK
+  TWITTER
+  ALL
+}
+
+enum ContentType {
+  PROMOTIONAL
+  EDUCATIONAL
+  ENGAGEMENT
+  STORY
+}
+
+enum GenerationStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum TemplateCategory {
+  INSTAGRAM_POST
+  INSTAGRAM_STORY
+  TWITTER_HEADER
+  TIKTOK_COVER
+}
+
+enum TransactionType {
+  SUBSCRIPTION
+  CREDIT_PURCHASE
+  REFUND
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id                    String             @id @default(uuid())
+  email                 String             @unique
+  name                  String?
+  avatarUrl             String?
+  plan                  Plan               @default(FREE)
+  credits               Int                @default(10)
+  creditsResetAt        DateTime?
+  stripeCustomerId      String?
+  stripeSubscriptionId  String?
+  subscriptionStatus    SubscriptionStatus?
+  locale                String             @default("ar")
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  profiles    BusinessProfile[]
+  generations Generation[]
+  posts       GeneratedPost[]
+  transactions Transaction[]
+  usageLogs   UsageLog[]
+}
+
+model BusinessProfile {
+  id              String   @id @default(uuid())
+  userId          String
+  name            String
+  description     String?
+  industry        String?
+  targetAudience  String?
+  tone            Tone     @default(FRIENDLY)
+  dialect         Dialect  @default(GULF)
+  brandColors     Json     @default("[]")
+  logoUrl         String?
+  keywords        String[]
+  isDefault       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  generations Generation[]
+}
+
+model Generation {
+  id          String           @id @default(uuid())
+  userId      String
+  profileId   String
+  prompt      String
+  platform    Platform
+  contentType ContentType
+  status      GenerationStatus @default(PENDING)
+  creditsUsed Int              @default(1)
+  aiModel     String           @default("gpt-4o-mini")
+  tokensUsed  Int?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  user    User              @relation(fields: [userId], references: [id])
+  profile BusinessProfile   @relation(fields: [profileId], references: [id])
+  posts   GeneratedPost[]
+}
+
+model GeneratedPost {
+  id              String    @id @default(uuid())
+  generationId    String
+  userId          String
+  platform        Platform
+  content         String
+  hashtags        String[]
+  caption         String?
+  cta             String?
+  imagePrompt     String?
+  templateId      String?
+  designConfig    Json?
+  exportedImageUrl String?
+  isSaved         Boolean   @default(false)
+  isPublished     Boolean   @default(false)
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  generation Generation     @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  user       User           @relation(fields: [userId], references: [id])
+  template   DesignTemplate? @relation(fields: [templateId], references: [id])
+}
+
+model DesignTemplate {
+  id           String           @id @default(uuid())
+  name         String
+  category     TemplateCategory
+  thumbnailUrl String?
+  htmlTemplate String
+  configSchema Json?
+  isPremium    Boolean          @default(false)
+  sortOrder    Int              @default(0)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  posts GeneratedPost[]
+}
+
+model SubscriptionPlan {
+  id                    String   @id @default(uuid())
+  name                  String
+  nameAr                String
+  priceMonthly          Decimal
+  priceYearly           Decimal
+  creditsPerMonth       Int
+  stripePriceIdMonthly  String?
+  stripePriceIdYearly   String?
+  features              Json
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+}
+
+model Transaction {
+  id                   String            @id @default(uuid())
+  userId               String
+  type                 TransactionType
+  amount               Decimal
+  currency             String            @default("USD")
+  status               TransactionStatus @default(PENDING)
+  stripePaymentIntentId String?
+  metadata             Json?
+  createdAt            DateTime          @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model UsageLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  platform  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}

@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ContentKit — كونتنت كيت 🚀
 
-## Getting Started
+> محتوى سوشال ميديا احترافي بالذكاء الاصطناعي
 
-First, run the development server:
+## ما هو ContentKit؟
+
+ContentKit هو منصة SaaS عربية تولّد محتوى سوشال ميديا بالذكاء الاصطناعي. صف بزنسك بجملة واحدة واحصل على أسبوع محتوى جاهز للنشر.
+
+## المنصات المدعومة
+- 📸 انستقرام
+- 🎵 تيكتوك
+- 🐦 تويتر (X)
+
+## التقنيات
+- **Frontend:** Next.js 14, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Next.js API Routes, Prisma ORM
+- **Database:** PostgreSQL (Supabase)
+- **Auth:** Supabase Auth
+- **AI:** OpenAI GPT-4o-mini
+- **Payments:** Stripe
+- **Hosting:** Vercel
+
+## التثبيت
 
 ```bash
+# Clone
+git clone https://github.com/abood556611/contentkit.git
+cd contentkit
+
+# Install
+npm install
+
+# Environment
+cp .env.example .env.local
+# Fill in your keys
+
+# Database
+npx prisma generate
+npx prisma db push
+
+# Run
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## متغيرات البيئة
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| المتغير | الوصف |
+|---------|-------|
+| `NEXT_PUBLIC_SUPABASE_URL` | رابط مشروع Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | مفتاح Supabase العام |
+| `DATABASE_URL` | رابط PostgreSQL |
+| `OPENAI_API_KEY` | مفتاح OpenAI |
+| `STRIPE_SECRET_KEY` | مفتاح Stripe السري |
+| `NEXT_PUBLIC_APP_URL` | رابط التطبيق |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## الخطط
 
-## Learn More
+| الخطة | السعر | التوليدات |
+|-------|-------|----------|
+| مجاني | $0 | 10/شهر |
+| ستارتر | $19/شهر | 100/شهر |
+| برو | $49/شهر | 400/شهر |
+| وكالة | $99/شهر | 1500/شهر |
 
-To learn more about Next.js, take a look at the following resources:
+## الرخصة
+MIT
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+Built with 🦞 by Clawdo for Abdullah
