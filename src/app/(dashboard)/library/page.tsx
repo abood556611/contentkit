@@ -10,13 +10,21 @@ import {
   Twitter,
   Play,
   Plus,
+  type LucideIcon,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 
-const platforms = [
+interface PlatformItem {
+  id: string;
+  label: string;
+  icon?: LucideIcon;
+  color?: string;
+}
+
+const platforms: PlatformItem[] = [
   { id: "all", label: "الكل" },
   { id: "instagram", label: "انستقرام", icon: Instagram, color: "bg-pink-500" },
   { id: "tiktok", label: "تيكتوك", icon: Play, color: "bg-black" },
@@ -63,12 +71,13 @@ export default function LibraryPage() {
 
   const getPlatformBadge = (platform: string) => {
     const platformData = platforms.find((p) => p.id === platform);
-    if (!platformData || platformData.id === "all") return null;
+    if (!platformData || platformData.id === "all" || !platformData.icon) return null;
+    const IconComponent = platformData.icon;
     return (
       <Badge
         className={`${platformData.color} text-white text-[10px] px-2 py-0.5`}
       >
-        <platformData.icon className="size-3 ml-1" />
+        <IconComponent className="size-3 ml-1" />
         {platformData.label}
       </Badge>
     );
@@ -104,7 +113,7 @@ export default function LibraryPage() {
               }`}
               onClick={() => setSelectedPlatform(platform.id)}
             >
-              {platform.icon && <platform.icon className="size-3 ml-1" />}
+              {platform.icon && (() => { const Icon = platform.icon; return <Icon className="size-3 ml-1" />; })()}
               {platform.label}
             </Badge>
           ))}
